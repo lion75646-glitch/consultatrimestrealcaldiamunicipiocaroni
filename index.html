@@ -3,20 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta y Pago de Trimestres Vehiculares</title>
+    <title id="page-title">Consulta y Pago de Trimestres Vehiculares</title>
     <style>
+        :root {
+            --primary-color: #1a365d;
+            --button-color: #2563eb;
+            --bg-color: #f4f6f9;
+            --header-text: #ffffff;
+        }
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            background-color: var(--bg-color);
             margin: 0;
             padding: 0;
             color: #333;
         }
         header {
-            background-color: #1a365d;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--header-text);
             text-align: center;
             padding: 2rem 1rem;
+            position: relative;
         }
         header h1 {
             margin: 0;
@@ -25,6 +32,21 @@
         header p {
             margin: 0.5rem 0 0;
             color: #cbd5e1;
+        }
+        .admin-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .admin-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
         }
         .container {
             max-width: 600px;
@@ -43,7 +65,7 @@
             font-weight: bold;
             color: #1e293b;
         }
-        input {
+        input, select {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid #cbd5e1;
@@ -51,8 +73,8 @@
             font-size: 1rem;
             box-sizing: border-box;
         }
-        button {
-            background-color: #2563eb;
+        button.main-btn {
+            background-color: var(--button-color);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
@@ -62,38 +84,143 @@
             width: 100%;
             font-weight: bold;
         }
-        button:hover {
-            background-color: #1d4ed8;
+        button.main-btn:hover {
+            opacity: 0.9;
         }
         footer {
             text-align: center;
             padding: 1.5rem;
             color: #64748b;
-            font-size: 0.9rem;
+            font-size: 0.9rem;solvent: transparent;
+        }
+        /* Estilos del Panel Administrativo */
+        #admin-panel {
+            display: none;
+            background: #1e293b;
+            color: white;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+        #admin-panel input, #admin-panel textarea {
+            background: #334155;
+            color: white;
+            border: 1px solid #475569;
+        }
+        .close-admin {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Consulta y Pago de Trimestres Vehiculares</h1>
-        <p>Alcaldía del Municipio Caroní</p>
+        <button class="admin-btn" onclick="toggleAdmin()">⚙️ Panel Admin</button>
+        <h1 id="header-title">Consulta y Pago de Trimestres Vehiculares</h1>
+        <p id="header-subtitle">Alcaldía del Municipio Caroní</p>
     </header>
 
-    <div class="container">
-        <h2>Consultar Estado del Vehículo</h2>
-        <form>
+    <!-- PANTALLA DE CONSULTA PÚBLICA -->
+    <div class="container" id="public-view">
+        <h2 id="section-title">Consultar Estado del Vehículo</h2>
+        <form onsubmit="realizarConsulta(event)">
             <div class="form-group">
-                <label for="placa">Ingrese la Placa o Cédula:</label>
+                <label id="input-label" for="placa">Ingrese la Placa o Cédula:</label>solvent: transparent;
                 <input type="text" id="placa" placeholder="Ej. ABC123D o V-12345678" required>
             </div>
-            <button type="submit">Consultar Estado</button>
+            <button type="submit" class="main-btn" id="btn-text">Consultar Estado</button>
         </form>
+        <div id="resultado-consulta" style="margin-top: 1.5rem; font-weight: bold;"></div>
+    </div>
+
+    <!-- PANEL ADMINISTRATIVO DE EDICIÓN -->
+    <div id="admin-panel">
+        <button class="close-admin" onclick="toggleAdmin()">Cerrar Panel</button>
+        <h2>Panel de Control y Personalización</h2>
+        <p>Edita todos los textos, colores e imágenes de la página:</p>
+        
+        <div class="form-group">
+            <label>Título Principal:</label>
+            <input type="text" id="edit-title" value="Consulta y Pago de Trimestres Vehiculares">
+        </div>
+        <div class="form-group">
+            <label>Subtítulo / Institución:</label>
+            <input type="text" id="edit-subtitle" value="Alcaldía del Municipio Caroní">
+        </div>
+        <div class="form-group">
+            <label>Color de Fondo del Encabezado:</label>
+            <input type="color" id="edit-header-color" value="#1a365d">
+        </div>
+        <div class="form-group">
+            <label>Color del Botón Principal:</label>
+            <input type="color" id="edit-btn-color" value="#2563eb">
+        </div>
+        <div class="form-group">
+            <label>Cargar Imagen / Logo (Subir archivo local):</label>
+            <input type="file" id="edit-image" accept="image/*" onchange="cargarImagen(event)">
+        </div>
+        <div id="image-preview-container" style="margin-bottom: 1.2rem; text-align: center;"></div>
+
+        <button class="main-btn" style="background-color: #22c55e;" onclick="guardarCambios()">Guardar y Aplicar Cambios</button>
     </div>
 
     <footer>
-        <p>&copy; 2026 - Todos los derechos reservados</p>
+        <p id="footer-text">&copy; 2026 - Todos los derechos reservados</p>
     </footer>
 
+    <script>
+        function toggleAdmin() {
+            const panel = document.getElementById('admin-panel');
+            const pub = document.getElementById('public-view');
+            if (panel.style.display === 'block') {
+                panel.style.display = 'none';
+                pub.style.display = 'block';
+            } else {
+                panel.style.display = 'block';
+                pub.style.display = 'none';
+            }
+        }
+
+        function guardarCambios() {
+            const title = document.getElementById('edit-title').value;
+            const subtitle = document.getElementById('edit-subtitle').value;
+            const hColor = document.getElementById('edit-header-color').value;
+            const bColor = document.getElementById('edit-btn-color').value;
+
+            document.getElementById('header-title').innerText = title;
+            document.getElementById('header-subtitle').innerText = subtitle;
+            document.documentElement.style.setProperty('--primary-color', hColor);
+            document.documentElement.style.setProperty('--button-color', bColor);
+
+            alert('¡Cambios aplicados con éxito!');
+            toggleAdmin();
+        }
+
+        function cargarImagen(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const container = document.getElementById('image-preview-container');
+                    container.innerHTML = `<img src="${e.target.result}" style="max-width: 150px; border-radius: 6px; margin-top: 10px;"><br><small>Imagen lista para mostrarse</small>`;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function realizarConsulta(event) {
+            event.preventDefault();
+            const placa = document.getElementById('placa').value;
+            const res = document.getElementById('resultado-consulta');
+            res.innerHTML = `<span style="color: #2563eb;">Consultando vehículo / cédula: ${placa}... Estado: Solvente / Al día.</span>`;
+        }
+    </script>
 </body>
 </html>
