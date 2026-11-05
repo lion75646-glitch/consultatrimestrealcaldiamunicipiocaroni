@@ -3,223 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Consulta y Pago de Trimestres Vehiculares</title>
+    <title>Pagos y Consultas de Trimestres Vehiculares - Alcaldía Bolivariana de Caroní</title>
+    <!-- Tailwind CSS para un diseño limpio y moderno -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Colores institucionales suaves (no muy saturados) */
         :root {
-            --primary-color: #1a365d;
-            --button-color: #2563eb;
-            --bg-color: #f4f6f9;
-            --header-text: #ffffff;
+            --caroni-blue: #1e3a8a;
+            --caroni-green: #065f46;
+            --caroni-red: #991b1b;
+            --caroni-yellow: #b45309;
         }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-        header {
-            background-color: var(--primary-color);
-            color: var(--header-text);
-            text-align: center;
-            padding: 2rem 1rem;
-            position: relative;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-        }
-        header p {
-            margin: 0.5rem 0 0;
-            color: #cbd5e1;
-        }
-        .admin-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-        .admin-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-        .container {
-            max-width: 600px;
-            margin: 2rem auto;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #1e293b;
-        }
-        input, select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 4px;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-        button.main-btn {
-            background-color: var(--button-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-        }
-        button.main-btn:hover {
-            opacity: 0.9;
-        }
-        footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: #64748b;
-            font-size: 0.9rem;solvent: transparent;
-        }
-        /* Estilos del Panel Administrativo */
-        #admin-panel {
-            display: none;
-            background: #1e293b;
-            color: white;
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 600px;
-            border-radius: 8px;
-        }
-        #admin-panel input, #admin-panel textarea {
-            background: #334155;
-            color: white;
-            border: 1px solid #475569;
-        }
-        .close-admin {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            float: right;
-        }
+        .bg-soft-blue { background-color: #f0f4f8; }
+        .border-soft-blue { border-color: #cbd5e1; }
     </style>
 </head>
-<body>
+<body class="bg-soft-blue min-h-screen flex flex-col font-sans text-slate-700">
 
-    <header>
-        <button class="admin-btn" onclick="toggleAdmin()">⚙️ Panel Admin</button>
-        <h1 id="header-title">Consulta y Pago de Trimestres Vehiculares</h1>
-        <p id="header-subtitle">Alcaldía del Municipio Caroní</p>
+    <!-- BARRA SUPERIOR / ACCESO ADMINISTRATIVO -->
+    <header class="bg-white border-b border-slate-200 shadow-sm py-3 px-6 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 rounded-full bg-blue-700"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-600"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-600"></span>
+            <span class="w-3 h-3 rounded-full bg-rose-600"></span>
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 ml-1" contenteditable="true">Alcaldía Bolivariana de Caroní</span>
+        </div>
+        <button onclick="abrirAdminModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-2 border border-slate-300">
+            <i class="fa-solid fa-lock text-xs"></i> Panel Administrativo
+        </button>
     </header>
 
-    <!-- PANTALLA DE CONSULTA PÚBLICA -->
-    <div class="container" id="public-view">
-        <h2 id="section-title">Consultar Estado del Vehículo</h2>
-        <form onsubmit="realizarConsulta(event)">
-            <div class="form-group">
-                <label id="input-label" for="placa">Ingrese la Placa o Cédula:</label>solvent: transparent;
-                <input type="text" id="placa" placeholder="Ej. ABC123D o V-12345678" required>
+    <!-- CABECERA CON IMÁGENES Y TÍTULO GRANDE -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 mb-8 border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
+            
+            <!-- Imagen Izquierda -->
+            <div class="w-32 h-32 md:w-40 md:h-40 rounded-xl overflow-hidden border-2 border-slate-200 shadow-inner flex-shrink-0 relative group">
+                <img id="img-izq" src="https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=300&q=80" alt="Palacio Municipal" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center cursor-pointer text-white text-xs font-bold" onclick="cambiarImagen('img-izq')">
+                    Cambiar Imagen
+                </div>
             </div>
-            <button type="submit" class="main-btn" id="btn-text">Consultar Estado</button>
-        </form>
-        <div id="resultado-consulta" style="margin-top: 1.5rem; font-weight: bold;"></div>
-    </div>
 
-    <!-- PANEL ADMINISTRATIVO DE EDICIÓN -->
-    <div id="admin-panel">
-        <button class="close-admin" onclick="toggleAdmin()">Cerrar Panel</button>
-        <h2>Panel de Control y Personalización</h2>
-        <p>Edita todos los textos, colores e imágenes de la página:</p>
-        
-        <div class="form-group">
-            <label>Título Principal:</label>
-            <input type="text" id="edit-title" value="Consulta y Pago de Trimestres Vehiculares">
-        </div>
-        <div class="form-group">
-            <label>Subtítulo / Institución:</label>
-            <input type="text" id="edit-subtitle" value="Alcaldía del Municipio Caroní">
-        </div>
-        <div class="form-group">
-            <label>Color de Fondo del Encabezado:</label>
-            <input type="color" id="edit-header-color" value="#1a365d">
-        </div>
-        <div class="form-group">
-            <label>Color del Botón Principal:</label>
-            <input type="color" id="edit-btn-color" value="#2563eb">
-        </div>
-        <div class="form-group">
-            <label>Cargar Imagen / Logo (Subir archivo local):</label>
-            <input type="file" id="edit-image" accept="image/*" onchange="cargarImagen(event)">
-        </div>
-        <div id="image-preview-container" style="margin-bottom: 1.2rem; text-align: center;"></div>
+            <!-- Título Grande y Subtítulo (Editable) -->
+            <div class="text-center flex-grow">
+                <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-full mb-2" contenteditable="true">Servicio Tributario Municipal</span>
+                <h1 class="text-2xl md:text-4xl font-extrabold text-slate-800 tracking-tight mb-2" contenteditable="true">
+                    Pagos y Consultas de Trimestres Vehiculares
+                </h1>
+                <p class="text-slate-500 text-sm md:text-base max-w-lg mx-auto" contenteditable="true">
+                    Consulte el estatus de solvencia de su vehículo ingresando la placa o cédula del propietario.
+                </p>
+            </div>
 
-        <button class="main-btn" style="background-color: #22c55e;" onclick="guardarCambios()">Guardar y Aplicar Cambios</button>
-    </div>
+            <!-- Imagen Derecha -->
+            <div class="w-32 h-32 md:w-40 md:h-40 rounded-xl overflow-hidden border-2 border-slate-200 shadow-inner flex-shrink-0 relative group">
+                <img id="img-der" src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=300&q=80" alt="Vehículo" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center cursor-pointer text-white text-xs font-bold" onclick="cambiarImagen('img-der')">
+                    Cambiar Imagen
+                </div>
+            </div>
+        </div>
 
-    <footer>
-        <p id="footer-text">&copy; 2026 - Todos los derechos reservados</p>
+        <!-- SECCIÓN DE CONSULTA (UN SOLO CAMPO) -->
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-8 border border-slate-100 max-w-xl mx-auto">
+            <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass text-blue-600"></i> Consulta en Línea
+            </h2>
+            
+            <form id="form-consulta" onsubmit="consultarVehiculo(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Ingrese Placa o Cédula</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                            <i class="fa-solid fa-id-card"></i>
+                        </span>
+                        <input type="text" id="busqueda-input" required placeholder="Ej: ABC1234 o V12345678" 
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition uppercase font-mono">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-search"></i> Consultar Estatus
+                </button>
+            </form>
+
+            <!-- RESULTADO DE LA CONSULTA -->
+            <div id="resultado-container" class="hidden mt-6 pt-6 border-t border-slate-200">
+                <div id="resultado-card" class="bg-emerald-50 border border-emerald-200 rounded-xl p-5 text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full mb-3 text-xl">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-emerald-800 mb-1">¡Vehículo Solvente!</h3>
+                    <p class="text-xs text-emerald-600 font-medium mb-4">Año Actual: 2026</p>
+
+                    <div class="bg-white rounded-lg p-4 text-left border border-emerald-100 shadow-sm space-y-2 text-sm">
+                        <div class="flex justify-between border-b border-slate-100 pb-1.5">
+                            <span class="text-slate-500 font-medium">Propietario:</span>
+                            <span id="res-propietario" class="font-bold text-slate-800"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-100 pb-1.5">
+                            <span class="text-slate-500 font-medium">Cédula / RIF:</span>
+                            <span id="res-cedula" class="font-bold text-slate-800"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-100 pb-1.5">
+                            <span class="text-slate-500 font-medium">Placa:</span>
+                            <span id="res-placa" class="font-bold text-slate-800 font-mono"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-100 pb-1.5">
+                            <span class="text-slate-500 font-medium">Marca:</span>
+                            <span id="res-marca" class="font-bold text-slate-800"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500 font-medium">Modelo:</span>
+                            <span id="res-modelo" class="font-bold text-slate-800"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="resultado-no-encontrado" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-5 text-center">
+                    <div class="inline-flex items-center justify-center w-12 h-12 bg-amber-100 text-amber-600 rounded-full mb-3 text-xl">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-amber-800 mb-1">Sin Registros Encontrados</h3>
+                    <p class="text-xs text-amber-700">Verifique el número de placa o cédula e intente nuevamente.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400 mt-auto">
+        <p contenteditable="true">Alcaldía Bolivariana del Municipio Caroní - Dirección de Tributos Municipales © 2026</p>
     </footer>
 
+    <!-- MODAL DE ACCESO ADMIN -->
+    <div id="modal-login" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-blue-600"></i> Acceso Administrativo
+                </h3>
+                <button onclick="cerrarAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">Ingrese la clave de seguridad para gestionar la base de datos de vehículos.</p>
+            <form onsubmit="verificarClave(event)">
+                <input type="password" id="input-clave" required placeholder="Clave secreta" 
+                    class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl mb-4 text-slate-800 text-center font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-medium py-2.5 rounded-xl transition shadow-sm">
+                    Ingresar al Panel
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PANEL ADMINISTRATIVO (DASHBOARD) -->
+    <div id="modal-admin-panel" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 my-8">
+            <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-3">
+                <div>
+                    <h3 class="font-bold text-lg text-slate-800">Panel de Gestión Vehicular</h3>
+                    <p class="text-xs text-slate-500">Información sincronizada en la nube local del sistema.</p>
+                </div>
+                <button onclick="cerrarPanelAdmin()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Formulario para agregar/editar vehículo -->
+            <form id="form-vehiculo" onsubmit="guardarVehiculo(event)" class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500" id="form-titulo-accion">Registrar Nuevo Vehículo</h4>
+                <input type="hidden" id="edit-index" value="-1">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Placa</label>
+                        <input type="text" id="admin-placa" required placeholder="ABC1234" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm uppercase font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Cédula del Propietario</label>
+                        <input type="text" id="admin-cedula" required placeholder="V12345678" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Nombre del Propietario</label>
+                        <input type="text" id="admin-propietario" required placeholder="Juan Pérez" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Marca</label>
+                        <input type="text" id="admin-marca" required placeholder="Toyota" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Modelo</label>
+                        <input type="text" id="admin-modelo" required placeholder="Corolla" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm">
+                    </div>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-medium transition">Guardar Vehículo</button>
+                    <button type="button" onclick="limpiarFormVehiculo()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded-lg text-xs font-medium transition">Cancelar</button>
+                </div>
+            </form>
+
+            <!-- Lista de vehículos -->
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Vehículos Registrados (Solventes 2026)</h4>
+            <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                        <tr>
+                            <th class="p-3">Placa / Cédula</th>
+                            <th class="p-3">Propietario</th>
+                            <th class="p-3">Vehículo</th>
+                            <th class="p-3 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-vehiculos" class="divide-y divide-slate-100">
+                        <!-- Se llena dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE FUNCIONALIDAD -->
     <script>
-        function toggleAdmin() {
-            const panel = document.getElementById('admin-panel');
-            const pub = document.getElementById('public-view');
-            if (panel.style.display === 'block') {
-                panel.style.display = 'none';
-                pub.style.display = 'block';
+        // Base de datos inicial en LocalStorage (Nube Local)
+        const datosIniciales = [
+            { placa: "ABC1234", cedula: "V12345678", propietario: "Carlos González", marca: "Toyota", modelo: "Corolla 2022" },
+            { placa: "XYZ9876", cedula: "V87654321", propietario: "María Rodríguez", marca: "Chevrolet", modelo: "Aveo 2013" }
+        ];
+
+        function obtenerVehiculos() {
+            let guardados = localStorage.getItem('vehiculos_caroni');
+            if (!guardados) {
+                localStorage.setItem('vehiculos_caroni', JSON.stringify(datosIniciales));
+                return datosIniciales;
+            }
+            return JSON.parse(guardados);
+        }
+
+        function guardarBaseVehiculos(vehiculos) {
+            localStorage.setItem('vehiculos_caroni', JSON.stringify(vehiculos));
+        }
+
+        // Consultar vehículo por placa o cédula (un solo campo)
+        function consultarVehiculo(e) {
+            e.preventDefault();
+            const busqueda = document.getElementById('busqueda-input').value.trim().toUpperCase();
+            const vehiculos = obtenerVehiculos();
+
+            const encontrado = vehiculos.find(v => v.placa.toUpperCase() === busqueda || v.cedula.toUpperCase() === busqueda);
+
+            const contenedorRes = document.getElementById('resultado-container');
+            const cardSolvente = document.getElementById('resultado-card');
+            const cardNoEncontrado = document.getElementById('resultado-no-encontrado');
+
+            contenedorRes.classList.remove('hidden');
+
+            if (encontrado) {
+                cardSolvente.classList.remove('hidden');
+                cardNoEncontrado.classList.add('hidden');
+
+                document.getElementById('res-propietario').innerText = encontrado.propietario;
+                document.getElementById('res-cedula').innerText = encontrado.cedula;
+                document.getElementById('res-placa').innerText = encontrado.placa;
+                document.getElementById('res-marca').innerText = encontrado.marca;
+                document.getElementById('res-modelo').innerText = encontrado.modelo;
             } else {
-                panel.style.display = 'block';
-                pub.style.display = 'none';
+                cardSolvente.classList.add('hidden');
+                cardNoEncontrado.classList.remove('hidden');
             }
         }
 
-        function guardarCambios() {
-            const title = document.getElementById('edit-title').value;
-            const subtitle = document.getElementById('edit-subtitle').value;
-            const hColor = document.getElementById('edit-header-color').value;
-            const bColor = document.getElementById('edit-btn-color').value;
-
-            document.getElementById('header-title').innerText = title;
-            document.getElementById('header-subtitle').innerText = subtitle;
-            document.documentElement.style.setProperty('--primary-color', hColor);
-            document.documentElement.style.setProperty('--button-color', bColor);
-
-            alert('¡Cambios aplicados con éxito!');
-            toggleAdmin();
+        // Control del Panel Admin y Contraseña 23456
+        function abrirAdminModal() {
+            document.getElementById('modal-login').classList.remove('hidden');
+            document.getElementById('modal-login').classList.add('flex');
+            document.getElementById('input-clave').value = '';
+            document.getElementById('input-clave').focus();
         }
 
-        function cargarImagen(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const container = document.getElementById('image-preview-container');
-                    container.innerHTML = `<img src="${e.target.result}" style="max-width: 150px; border-radius: 6px; margin-top: 10px;"><br><small>Imagen lista para mostrarse</small>`;
-                }
-                reader.readAsDataURL(file);
+        function cerrarAdminModal() {
+            document.getElementById('modal-login').classList.remove('flex');
+            document.getElementById('modal-login').classList.add('hidden');
+        }
+
+        function verificarClave(e) {
+            e.preventDefault();
+            const clave = document.getElementById('input-clave').value;
+            if (clave === "23456") {
+                cerrarAdminModal();
+                abrirPanelAdmin();
+            } else {
+                alert("Clave incorrecta. Intente nuevamente.");
             }
         }
 
-        function realizarConsulta(event) {
-            event.preventDefault();
-            const placa = document.getElementById('placa').value;
-            const res = document.getElementById('resultado-consulta');
-            res.innerHTML = `<span style="color: #2563eb;">Consultando vehículo / cédula: ${placa}... Estado: Solvente / Al día.</span>`;
+        function abrirPanelAdmin() {
+            document.getElementById('modal-admin-panel').classList.remove('hidden');
+            document.getElementById('modal-admin-panel').classList.add('flex');
+            renderizarTablaAdmin();
+        }
+
+        function cerrarPanelAdmin() {
+            document.getElementById('modal-admin-panel').classList.remove('flex');
+            document.getElementById('modal-admin-panel').classList.add('hidden');
+        }
+
+        function renderizarTablaAdmin() {
+            const vehiculos = obtenerVehiculos();
+            const tbody = document.getElementById('tabla-vehiculos');
+            tbody.innerHTML = '';
+
+            if (vehiculos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No hay vehículos registrados.</td></tr>`;
+                return;
+            }
+
+            vehiculos.forEach((v, index) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-mono font-medium text-slate-800">${v.placa} <br><span class="text-slate-400 font-normal">${v.cedula}</span></td>
+                        <td class="p-3 text-slate-700">${v.propietario}</td>
+                        <td class="p-3 text-slate-600">${v.marca} - ${v.modelo}</td>
+                        <td class="p-3 text-right space-x-2">
+                            <button onclick="editarVehiculo(${index})" class="text-blue-600 hover:text-blue-800 font-medium">Editar</button>
+                            <button onclick="eliminarVehiculo(${index})" class="text-rose-600 hover:text-rose-800 font-medium">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function guardarVehiculo(e) {
+            e.preventDefault();
+            const index = document.getElementById('edit-index').value;
+            const nuevoVehiculo = {
+                placa: document.getElementById('admin-placa').value.trim().toUpperCase(),
+                cedula: document.getElementById('admin-cedula').value.trim().toUpperCase(),
+                propietario: document.getElementById('admin-propietario').value.trim(),
+                marca: document.getElementById('admin-marca').value.trim(),
+                modelo: document.getElementById('admin-modelo').value.trim()
+            };
+
+            let vehiculos = obtenerVehiculos();
+
+            if (index === "-1") {
+                vehiculos.push(nuevoVehiculo);
+            } else {
+                vehiculos[index] = nuevoVehiculo;
+            }
+
+            guardarBaseVehiculos(vehiculos);
+            limpiarFormVehiculo();
+            renderizarTablaAdmin();
+        }
+
+        function editarVehiculo(index) {
+            const vehiculos = obtenerVehiculos();
+            const v = vehiculos[index];
+
+            document.getElementById('edit-index').value = index;
+            document.getElementById('admin-placa').value = v.placa;
+            document.getElementById('admin-cedula').value = v.cedula;
+            document.getElementById('admin-propietario').value = v.propietario;
+            document.getElementById('admin-marca').value = v.marca;
+            document.getElementById('admin-modelo').value = v.modelo;
+            document.getElementById('form-titulo-accion').innerText = "Editar Vehículo";
+        }
+
+        function eliminarVehiculo(index) {
+            if (confirm("¿Está seguro de eliminar este vehículo del registro?")) {
+                let vehiculos = obtenerVehiculos();
+                vehiculos.splice(index, 1);
+                guardarBaseVehiculos(vehiculos);
+                renderizarTablaAdmin();
+            }
+        }
+
+        function limpiarFormVehiculo() {
+            document.getElementById('edit-index').value = "-1";
+            document.getElementById('form-vehiculo').reset();
+            document.getElementById('form-titulo-accion').innerText = "Registrar Nuevo Vehículo";
+        }
+
+        // Función para cambiar las imágenes fácilmente con un enlace URL
+        function cambiarImagen(idImg) {
+            const nuevaUrl = prompt("Ingrese la URL de la nueva imagen:");
+            if (nuevaUrl && nuevaUrl.trim() !== "") {
+                document.getElementById(idImg).src = nuevaUrl.trim();
+            }
         }
     </script>
 </body>
